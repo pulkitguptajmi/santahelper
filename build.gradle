@@ -1,7 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.11'
+    id 'org.springframework.boot' version '2.4.10'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "com.palantir.docker" version "0.25.0"
 }
 
 group = 'com.chekk'
@@ -18,17 +19,29 @@ repositories {
     mavenCentral()
 }
 
+docker {
+    name "santahelper"
+    dockerfile file('src/docker/Dockerfile')
+    copySpec.from(jar).rename(".*","app.jar")
+    buildArgs(['JAR_FILE': "app.jar"])
+}
+
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    implementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.testng:testng:7.5')
+    testImplementation('org.mockito:mockito-core:4.3.1')
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+test {
+    // Use TestNG for unit tests
+    useTestNG()
 }
