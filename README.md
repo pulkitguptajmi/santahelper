@@ -6,11 +6,11 @@ A Rest API to help Santa and his ageing elves
 - Java 8 
 
 ## Steps to run the application:
-- git clone https://github.com/pulkitguptajmi/santahelper.git
-- git switch master
-- gradle clean build
-- gradle docker
-- docker run -p 8085:8085 santahelper
+- `git clone https://github.com/pulkitguptajmi/santahelper.git`
+- `git switch master`
+- `gradle clean build`
+- `gradle docker`
+- `docker run -p 8085:8085 santahelper`
 
 ## Sample curl request and response:
 ### Request
