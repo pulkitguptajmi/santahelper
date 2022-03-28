@@ -1,6 +1,6 @@
 package com.chekk.santahelper.service;
 
-import com.chekk.santahelper.controller.impl.SantaHelperControllerImpl;
+
 import com.chekk.santahelper.exceptions.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class SantaHelperService {
 
         // Determine if filling the hood is possible with the provided present weights
         int isFillingHoodPossible = countMinPresents(hoodWeight, presentWeights, memoizationArray);
-        if (isFillingHoodPossible == Integer.MAX_VALUE) { // Not possible
+        if (isFillingHoodPossible == Integer.MAX_VALUE) { // Filling Not possible
             logger.error("Filling the hood with the present weights was found to be not possible");
             throw new CustomException("Filling the hood with the given weights is not possible");
         }
@@ -53,21 +53,20 @@ public class SantaHelperService {
 
     private void findHoodWeights(Integer hoodWeight, List<Integer> presentWeights, int[] memoizationArray,
                                  List<Integer> filledHoodWeights) {
-        // Base Case
+        // Base Case (hood has no capacity)
         if (hoodWeight == 0) {
             return;
         }
 
         for (int idx = 0; idx < presentWeights.size(); idx++) {
-            // Try every present that has
-            // value smaller than hood weight
+            // Try every present that has weight smaller than hood weight
             int weightDifference = hoodWeight - presentWeights.get(idx);
             if (weightDifference >= 0 &&
                     (memoizationArray[weightDifference] + 1 == memoizationArray[hoodWeight])) {
-                // Add current present weight to hood
+                // Add current present weight to the hood
                 filledHoodWeights.add(presentWeights.get(idx));
 
-                // Backtrack
+                // Backtracking
                 findHoodWeights(weightDifference, presentWeights, memoizationArray, filledHoodWeights);
                 break;
             }
@@ -76,30 +75,26 @@ public class SantaHelperService {
 
     private Integer countMinPresents(Integer hoodWeight, List<Integer> presentWeights,
                                      int[] memoizationArray) {
-        // Base case
+        // Base case (hood has no capacity)
         if (hoodWeight == 0) {
             memoizationArray[0] = 0;
             return 0;
         }
 
-        // If previously computed, return
-        // previously computed result
+        // If previously computed, return previously computed result (memoization)
         if (memoizationArray[hoodWeight] != -1) {
             return memoizationArray[hoodWeight];
         }
 
         Integer decision = Integer.MAX_VALUE;
-        // Try every present that has smaller
-        // value than the hood weight
+        // Try every present that has smaller weight than the hood weight
         for (int idx = 0; idx < presentWeights.size(); idx++) {
             if (presentWeights.get(idx) <= hoodWeight) {
                 int remainingHoodWeightToFill = (hoodWeight - presentWeights.get(idx));
                 int intermediaryDecision = countMinPresents(remainingHoodWeightToFill, presentWeights,
                         memoizationArray);
 
-                // Check for Integer.MAX_VALUE to avoid
-                // overflow and see if decision value
-                // can be minimized
+                // The below step prevents overflow and minimises the decision value
                 if (intermediaryDecision != Integer.MAX_VALUE)
                     decision = Math.min(decision, 1 + intermediaryDecision);
             }
